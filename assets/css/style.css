@@ -510,14 +510,21 @@ body {
 }
 
 .last-updated {
-    margin-top: 1.5rem;
-    opacity: 0.6;
+    margin-top: 2rem;
+    display: inline-flex;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50px;
+    backdrop-filter: blur(5px);
 }
 
 .last-updated p {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 500;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: 0.02em;
 }
 
 .values-source {
