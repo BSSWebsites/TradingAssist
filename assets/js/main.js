@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         document.getElementById('glass-nav').classList.add('visible');
     }, 500);
+
+    updateReleaseInfo();
 });
 
 const heroTl = gsap.timeline({
@@ -108,3 +110,54 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// GH Release Updater
+function getOrdinalSuffix(day) {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+        case 1:  return "st";
+        case 2:  return "nd";
+        case 3:  return "rd";
+        default: return "th";
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date)) return null;
+    const day = date.getDate();
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day}${getOrdinalSuffix(day)} ${month} ${year}`;
+}
+
+async function updateReleaseInfo() {
+    try {
+        const response = await fetch('https://api.github.com/repos/BSSWebsites/TradingAssist/releases/latest');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        
+        // Windows: trading-overlay-windows-x64.exe
+        const windowsAsset = data.assets.find(asset => asset.name === 'trading-overlay-windows-x64.exe');
+        if (windowsAsset) {
+            const downloadBtn = document.getElementById('windows-download');
+            if (downloadBtn) {
+                downloadBtn.href = windowsAsset.browser_download_url;
+            }
+        }
+        
+        // Update Last Updated date
+        if (data.published_at) {
+            const formattedDate = formatDate(data.published_at);
+            if (formattedDate) {
+                const lastUpdatedElement = document.getElementById('last-updated-text');
+                if (lastUpdatedElement) {
+                    lastUpdatedElement.textContent = `Last updated ${formattedDate}`;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch latest release:', error);
+    }
+}
